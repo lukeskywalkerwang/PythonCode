@@ -141,7 +141,7 @@ while (mainchar.gethp() > 0 and opponent.gethp() > 0):
         opponent.attack(mainchar)
 
 mainchar.recover(40)
-mainchar.recover(40) ## note that mainchar only recovers to 100/100 (the max)
+mainchar.recover(40)
 opponent.fullheal()
 mainchar.charge()
 mainchar.charge()
