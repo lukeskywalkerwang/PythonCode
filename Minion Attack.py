@@ -147,15 +147,10 @@ mainchar.charge()
 mainchar.charge()
 '''
 
-numPlayer = 0
 while True:
-    numPlayer = input("How many player? ")
-    substring = '.'
-    if not numPlayer.isnumeric():
-        if substring in numPlayer:
-            print("Error. Please enter an integer.")
-        else:
-            print("Error. Please enter a positive integer.")
+    numPlayer = 0
+    while numPlayer not in [str(x) for x in range(1, 9)]:
+        numPlayer = input("How many players (1-8)? ")
     else:
         break
 
@@ -166,7 +161,7 @@ for i in range(int(numPlayer)):
     playerlist.append(player)
 
 minionlist = []
-boss = Boss("Boss", hp=20 * int(numPlayer))
+boss = Boss("Boss", hp=20*int(numPlayer))
 boss.maxhp = boss.hp
 minion = boss.spawn()
 minionlist.append(minion)
@@ -175,21 +170,34 @@ while True:
     for i in range(int(numPlayer)):
 
         print("1. Attack \n", "2. Charge \n", "3. Shield", sep="")
-        action = eval(input(playerlist[i].name + ", what would you like to do? "))
 
-        if action == 1:
-            if len(minionlist) == 0:
-                print("1. Boss (HP ", boss.gethp(), ")", sep="")
-                playerlist[i].attack(boss)
+        while True:
+            action = 0
+            while action not in ['1', '2', '3']:
+                action = input(playerlist[i].name + ", what would you like to do? ")
             else:
+                break
+
+        if eval(action) == 1:
+            if len(minionlist) != 0:
                 for j in range(len(minionlist)):
                     print(j + 1, ". Minion (HP ", minionlist[j].hp, ")", sep="")
-                numattack = input(playerlist[i].name + ", who would you like to attack? ")
+
+                while True:
+                    numattack = 0
+                    while numattack not in [str(x) for x in range(1, len(minionlist) + 1)]:
+                        numattack = input(playerlist[i].name + ", who would you like to attack? ")
+                    else:
+                        break
+
                 playerlist[i].attack(minionlist[int(numattack)-1])
                 if minionlist[int(numattack)-1].gethp() == 0:
                     del minionlist[int(numattack)-1]
+            else:
+                print("1. Boss (HP ", boss.gethp(), ")", sep="")
+                playerlist[i].attack(boss)
 
-        if action == 2:
+        if eval(action) == 2:
             if playerlist[i].charged:
                 print(playerlist[i].name, " already charged. Attack remains as ", playerlist[i].at, ".", sep="")
             else:
@@ -197,7 +205,7 @@ while True:
                 print(playerlist[i].name, " charged. Attack is increased to ", int(2.5*playerlist[i].at), " from ",
                       playerlist[i].at, ".", sep="")
 
-        if action == 3:
+        if eval(action) == 3:
             playerlist[i].shield()
             print(playerlist[i].name, "is safe from the next", playerlist[i].shields, "attacks.")
 
@@ -214,6 +222,8 @@ while True:
             hplist.append(playerlist[k].hp)
         hplist.reverse()
         weakest = len(hplist) - 1 - hplist.index(min(hplist))
+        ## print("weakest = ", weakest)
+        ## print("len(playerlist)) = ", len(playerlist))
 
         for j in range(len(minionlist)):
             if playerlist[weakest].shields <= 0:
@@ -222,7 +232,7 @@ while True:
                     del playerlist[weakest]
             else:
                 playerlist[weakest].decr_shield()
-                print("Minion attached.", playerlist[weakest].name, "is safe from the next",
+                print("Minion attacked.", playerlist[weakest].name, "is safe from the next",
                       playerlist[weakest].shields, "attacks")
 
     if len(playerlist) == 0:
